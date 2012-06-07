@@ -12,8 +12,8 @@ import java.util.Scanner;
 public class AnagramUtil<T> {
 	//Variables
 	public enum 	SortMethod { INSERTION, SELECTION };
-	private static 	SortMethod method = SortMethod.INSERTION;
-	private Comparator<T> byNaturalSort = new NaturalSort();
+	private static 	SortMethod method	= SortMethod.INSERTION;
+	private Comparator<T> byStringComparator = new StringComparator();
 	
 	
 	/**
@@ -25,13 +25,13 @@ public class AnagramUtil<T> {
 	 * @return
 	 */
 	public static String sort(String s){
-		
+
 		if(method == SortMethod.INSERTION){
-			insertionSort(s.toCharArray(), byNaturalSort);
+			insertionSort(s.toCharArray(), byStringComparator);
 		}
 		
 		else{
-			selectionSort(s.toCharArray(), byNaturalSort);
+			selectionSort(s.toCharArray(), byStringComparator);
 		}
 		//Return sorted String
 		return s;
@@ -136,9 +136,15 @@ public class AnagramUtil<T> {
 			addToArray(sc.next(),sarr);
 		}
 		
-		
 		//Return the anagram list
 		return getLargestAnagramGroup(sarr);
+	}
+	
+	/**
+	 * This method is used to set the state of the AnagramUtil class to use either selection or insertion sort
+	 */
+	public static void setSortMethod(SortMethod sortMethod){
+		method = sortMethod;
 	}
 	
 	private static void addToArray(String s1, String s2, String[] arr){
@@ -170,7 +176,7 @@ public class AnagramUtil<T> {
 		arr[i + 1] = s1;
 	}
 	
-	private class NaturalSort implements Comparator<T>, Comparable<T> {
+	private class StringComparator implements Comparator<T>, Comparable<T> {
 
 		@Override
 		public int compare(T o1, T o2) {
