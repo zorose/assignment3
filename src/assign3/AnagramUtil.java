@@ -136,15 +136,15 @@ public class AnagramUtil<T> {
 	 * @return boolean
 	 */
 	public static boolean areAnagrams(String s1, String s2){
-		//Sort each string
-		s1 = sort(s1);
-		s2 = sort(s2);
+		//Sort each string ignoring case
+		s1 = sort(s1.toLowerCase());
+		s2 = sort(s2.toLowerCase());
 		
 		//Compare and return results
 		if(s1.length() != s2.length())
 			return false;
 		
-		if(s1.compareToIgnoreCase(s2) != 0)
+		if(s1.compareTo(s2) != 0)
 			return false;
 		else
 			return true;
@@ -153,6 +153,7 @@ public class AnagramUtil<T> {
 	/**
 	 * This method returns the largest group of anagrams in the input array of words,
 	 * in no particular order. It returns an empty array if there are no anagrams in the input array.
+	 * only one will be added.
 	 * @param arr
 	 * @return String[]
 	 */
@@ -162,8 +163,9 @@ public class AnagramUtil<T> {
 		for(int i = 1; i < arr.length; i ++){
 			for(int j = 0; j < i; j ++){
 				if(areAnagrams(arr[i], arr[j])){
-					//if it is then add it to the list of anagrams
-					addToArray(arr[i], arr[j], anagramList);
+					//if it is then add eat to the list of anagrams
+					anagramList = addToArray(arr[i], anagramList);
+					anagramList = addToArray(arr[j], anagramList);
 				}
 			}
 		}
@@ -180,7 +182,7 @@ public class AnagramUtil<T> {
 	 */
 	public static String[] getLargestAnagramGroup(String filename){
 		//Create new String array to return
-		String[] sarr = new String[0];
+		String[] results = new String[0];
 		
 		//Get file from String filename
 		File file = new File(filename);
@@ -192,7 +194,7 @@ public class AnagramUtil<T> {
 			
 			//Copy info from scanner to String array
 			while(sc.hasNext()){
-				sarr = addToArray(sc.next(),sarr);
+				results = addToArray(sc.next(),results);
 			}
 			
 		} catch (FileNotFoundException e) {
@@ -200,7 +202,7 @@ public class AnagramUtil<T> {
 		}
 		
 		//Return the anagram list
-		return getLargestAnagramGroup(sarr);
+		return getLargestAnagramGroup(results);
 	}
 
 	/**
@@ -212,19 +214,24 @@ public class AnagramUtil<T> {
 	}
 	
 	/**
-	 * This method adds a string to an array.
+	 * This method adds a String to a String[] excluding all duplicates.
 	 * @param s1
 	 * @param arr
+	 * @return String[]
 	 */
 	private static String[] addToArray(String s1, String[] arr){
-		int i;
+		//Checks for duplicates ignoring case
+		if(duplicateInsertion(s1, arr) == true)
+			return arr;
+
+		
 		//Increase array size by 1
 		String[] tempList = arr.clone();
 		arr = new String[arr.length + 1];
 		
 		//Add in original elements
 		if(!(tempList.length < 1)){
-			for(i = 0; i < tempList.length; i ++)
+			for(int i = 0; i < tempList.length; i ++)
 				arr[i] = tempList[i];
 		}
 		
@@ -235,14 +242,18 @@ public class AnagramUtil<T> {
 	}
 	
 	/**
-	 * This method adds two strings to an array
+	 * Uses binary searching to check if a String is already in a String[].
+	 * Upper and lower case words that are the same are considered duplicates.
+	 * ie Hat and hat are duplicates.
 	 * @param s1
-	 * @param s2
 	 * @param arr
+	 * @return
 	 */
-	private static void addToArray(String s1, String s2, String[] arr){
-		addToArray(s1, arr);
-		addToArray(s2, arr);
+	private static boolean duplicateInsertion(String s1, String[] arr){
+		for(String s : arr)
+			if(s1.toLowerCase().equals(s.toLowerCase()))
+				return true;
+		return false;
 	}
 	
 	/**

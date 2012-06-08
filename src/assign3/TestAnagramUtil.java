@@ -35,24 +35,30 @@ public class TestAnagramUtil extends TestBase {
 	
 	public void testGetLargestAnagramGroup(){
 		//Test getLargestAnagramGroup method w/File name:
-		String[] results 		= AnagramUtil.getLargestAnagramGroup("sample_word_list.txt");
+		String[] results 	= AnagramUtil.getLargestAnagramGroup("sample_word_list.txt");
 		String[] expected 	= new String[]{"carets", "Caters", "caster", "crates", "Reacts", "recast", "traces"};
 		
-		//Sort each array
-		results 		= AnagramUtil.sort(results);
-		expected 	= AnagramUtil.sort(expected);
+		//Test if results contains expected
+		int count = 0;
+		for(String s1 : expected)
+			for(String s2 : results)
+				if(s1.equals(s2))
+					count ++;
+		TestUtil.assertEquals(count, expected.length);
 		
-		//Compare each element
-		for(String s1 : results)
-			for(String s2 : expected)
-				TestUtil.assertEquals(s1, s2);
 		
 		
 		//Test getLargestAnagramGroup method w/String[]:
-		String[] input = new String[]{"carets", "Caters"};
+		String[] input	= new String[]{"hydroxydeoxycorticosterones", "hydroxydesoxycorticosterone", "not_an_anagram"};
+		expected 		= new String[]{"hydroxydeoxycorticosterones", "hydroxydesoxycorticosterone"};
 		results = AnagramUtil.getLargestAnagramGroup(input);
-		for(String s : results)
-			System.out.println(s);
+		
+		//Sort arrays for testing
+		results  = AnagramUtil.sort(results);
+		expected = AnagramUtil.sort(expected);
+		
+		for(int i = 0; i < expected.length; i ++)
+			TestUtil.assertEquals(results[i], expected[i]);
 	}
 	
 	/**
