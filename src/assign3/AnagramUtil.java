@@ -14,7 +14,7 @@ import java.util.Scanner;
 public class AnagramUtil<T> {
 	//Variables
 	public enum 	SortMethod { INSERTION, SELECTION };
-	private static 	SortMethod method	= SortMethod.INSERTION;
+	private static 	SortMethod method	= SortMethod.SELECTION;
 	
 	
 	/**
@@ -149,14 +149,16 @@ public class AnagramUtil<T> {
 	 */
 	public static String[] getLargestAnagramGroup(String[] arr){
 		String[] anagramList = new String[0];
+		//Check if each set is an anagram
 		for(int i = 1; i < arr.length; i ++){
 			for(int j = 0; j < i; j ++){
 				if(areAnagrams(arr[i], arr[j])){
+					//if it is then add it to the list of anagrams
 					addToArray(arr[i], arr[j], anagramList);
 				}
 			}
 		}
-		
+		//return the list of anagrams
 		return anagramList;
 	}
 	
@@ -240,17 +242,12 @@ public class AnagramUtil<T> {
 	 *
 	 * @param <T>
 	 */
-	private static class StringComparator<T> implements Comparator<T>, Comparable<T> {
+	private static class StringComparator<T> implements Comparator<T> {
 
 		@Override
 		public int compare(T o1, T o2) {
 			Comparable<T> element = (Comparable<T>) o1;
 			return element.compareTo(o2);
-		}
-		
-		@Override
-		public int compareTo(T o) {
-			return this.compareTo(o);
 		}
 	}
 }

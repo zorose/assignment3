@@ -15,13 +15,21 @@ public class TestAnagramUtil extends TestBase {
 	
 	//TODO Use both selection and insertion sorting methods
 	
+	public void testSort(){
+		String input 	= "Stephen";
+		String result 	= input;
+		AnagramUtil.sort(result);
+		String expected = "Seehnpt";
+//		TestUtil.assertEquals(result, expected);
+	}
+	
 	public void testComparator(){
 		String[] input = new String[]{"z", "a", "f"};
-		String[] provenResults = new String[]{"a", "f", "z"};
+		String[] expected = new String[]{"a", "f", "z"};
 		String[] results = AnagramUtil.sort(input);
 		
 		for(int i = 0; i < results.length; i ++){
-			TestUtil.assertEquals(results[i], provenResults[i]);
+			TestUtil.assertEquals(results[i], expected[i]);
 		}
 		
 	}
@@ -29,15 +37,15 @@ public class TestAnagramUtil extends TestBase {
 	public void testGetLargestAnagramGroup(){
 		//Test getLargestAnagramGroup method w/File name:
 		String[] results 		= AnagramUtil.getLargestAnagramGroup("sample_word_list.txt");
-		String[] provenResults 	= new String[]{"carets", "Caters", "caster", "crates", "Reacts", "recast", "traces"};
+		String[] expected 	= new String[]{"carets", "Caters", "caster", "crates", "Reacts", "recast", "traces"};
 		
 		//Sort each array
 		results 		= AnagramUtil.sort(results);
-		provenResults 	= AnagramUtil.sort(provenResults);
+		expected 	= AnagramUtil.sort(expected);
 		
 		//Compare each element
 		for(String s1 : results)
-			for(String s2 : provenResults)
+			for(String s2 : expected)
 				TestUtil.assertEquals(s1, s2);
 		
 		
