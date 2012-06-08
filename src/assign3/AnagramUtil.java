@@ -14,7 +14,7 @@ import java.util.Scanner;
 public class AnagramUtil<T> {
 	//Variables
 	public enum 	SortMethod { INSERTION, SELECTION };
-	private static 	SortMethod method	= SortMethod.SELECTION;
+	private static 	SortMethod method	= SortMethod.INSERTION;
 	
 	
 	/**
@@ -48,8 +48,16 @@ public class AnagramUtil<T> {
 			selectionSort(tarr, byStringComparator);
 		}
 		
+		//Create return string
+		String result = "";
+		
+		//Transfer sorted Character array back to a string
+		for(T t : tarr){
+			result = result + t;
+		}
+		
 		//Return sorted String
-		return s;
+		return result;
 	}
 	
 	/**
@@ -103,6 +111,7 @@ public class AnagramUtil<T> {
 	 * @param c
 	 */
 	public static <T> void selectionSort(T[] arr, Comparator<? super T> c){
+		//TODO this is sorting backwards
 		int first;
 		T temp;
 		

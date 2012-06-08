@@ -17,10 +17,9 @@ public class TestAnagramUtil extends TestBase {
 	
 	public void testSort(){
 		String input 	= "Stephen";
-		String result 	= input;
-		AnagramUtil.sort(result);
+		String result 	= AnagramUtil.sort(input);
 		String expected = "Seehnpt";
-//		TestUtil.assertEquals(result, expected);
+		TestUtil.assertEquals(result, expected);
 	}
 	
 	public void testComparator(){
