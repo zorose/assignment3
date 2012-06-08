@@ -13,10 +13,23 @@ public class TestAnagramUtil extends TestBase {
 		new TestAnagramUtil().runTests();
 	}
 	
-	public void getLargestAnagramGroupTest(){
+	//TODO Use both selection and insertion sorting methods
+	
+	public void testComparator(){
+		String[] input = new String[]{"z", "a", "f"};
+		String[] provenResults = new String[]{"a", "f", "z"};
+		String[] results = AnagramUtil.sort(input);
+		
+		for(int i = 0; i < results.length; i ++){
+			TestUtil.assertEquals(results[i], provenResults[i]);
+		}
+		
+	}
+	
+	public void testGetLargestAnagramGroup(){
 		//Test getLargestAnagramGroup method w/File name:
-		String[] results = AnagramUtil.getLargestAnagramGroup("sample_word_list.txt");
-		String[] provenResults = new String[]{"carets", "Caters", "caster", "crates", "Reacts", "recast", "traces"};
+		String[] results 		= AnagramUtil.getLargestAnagramGroup("sample_word_list.txt");
+		String[] provenResults 	= new String[]{"carets", "Caters", "caster", "crates", "Reacts", "recast", "traces"};
 		
 		//Sort each array
 		results 		= AnagramUtil.sort(results);

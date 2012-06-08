@@ -81,17 +81,19 @@ public class AnagramUtil<T> {
 	 * @param c
 	 */
 	public static <T> void insertionSort(T[] arr, Comparator<? super T> c){
-		int j;
-		T focusObject;
+		T key; //The item to be inserted
+		int j; //Number of items sorted so far
+		int i;
 		
-		for(int i = 1; i < arr.length; i ++){
-			focusObject = arr[i];
-			
-			for(j = i - 1; (j >= 0) && (c.compare(arr[i], focusObject) < 0); i --){
-				arr[j + 1] = arr [j];
+		
+		//If arr is not larger than one element: return the array.
+		
+		for(j = 1; j < arr.length; j ++){
+			key = arr[j];
+			for(i = j-1; (i >= 0) && ( c.compare(arr[i], key) > 0); i --){
+				arr[i+1] = arr[i];
 			}
-			
-			arr[j+1] = focusObject;
+			arr[i+1] = key;
 		}
 	}
 	
@@ -125,8 +127,9 @@ public class AnagramUtil<T> {
 	 * @return boolean
 	 */
 	public static boolean areAnagrams(String s1, String s2){
-		//TODO Sort each string
-		
+		//Sort each string
+		s1 = sort(s1);
+		s2 = sort(s2);
 		
 		//Compare and return results
 		if(s1.length() != s2.length())
