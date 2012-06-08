@@ -1,5 +1,7 @@
 package assign3;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Comparator;
 import java.util.Scanner;
 /**
@@ -13,7 +15,6 @@ public class AnagramUtil<T> {
 	//Variables
 	public enum 	SortMethod { INSERTION, SELECTION };
 	private static 	SortMethod method	= SortMethod.INSERTION;
-	private Comparator<T> byStringComparator = new StringComparator();
 	
 	
 	/**
@@ -24,17 +25,54 @@ public class AnagramUtil<T> {
 	 * @param s
 	 * @return
 	 */
-	public static String sort(String s){
-
+	public static <T>String sort(String s){
+		//Covert String s to T[]
+		T[] tarr = (T[]) new Character[s.toCharArray().length];
+		
+		char[] carr = s.toCharArray();
+		
+		for(int i = 0; i < carr.length; i ++){
+			Character c = carr[i];
+			tarr[i] = (T) c;
+		}
+		
+		//Create String Comparator to pass the sorting method
+		Comparator<T> byStringComparator = new StringComparator();
+		
+		//Choose the sorting method
 		if(method == SortMethod.INSERTION){
-			insertionSort(s.toCharArray(), byStringComparator);
+			insertionSort(tarr, byStringComparator);
 		}
 		
 		else{
-			selectionSort(s.toCharArray(), byStringComparator);
+			selectionSort(tarr, byStringComparator);
 		}
+		
 		//Return sorted String
 		return s;
+	}
+	
+	/**
+	 * This method sorts an array of strings
+	 * @param sarr
+	 * @return
+	 */
+	public static String[] sort(String[] sarr){
+
+		//Create String Comparator to pass the sorting method
+		Comparator<String> byStringComparator = new StringComparator();
+		
+		//Choose the sorting method
+		if(method == SortMethod.INSERTION){
+			insertionSort(sarr, byStringComparator);
+		}
+		
+		else{
+			selectionSort(sarr, byStringComparator);
+		}
+		
+		//Return sorted String
+		return sarr;
 	}
 	
 	/**
@@ -82,13 +120,15 @@ public class AnagramUtil<T> {
 	
 	/**
 	 * This method returns true if the two input strings (ignoring case) are anagrams of each other, otherwise returns false.
-	 * @param <T>
 	 * @param s1
 	 * @param s2
-	 * @return
+	 * @return boolean
 	 */
 	public static boolean areAnagrams(String s1, String s2){
+		//TODO Sort each string
 		
+		
+		//Compare and return results
 		if(s1.length() != s2.length())
 			return false;
 		
@@ -102,7 +142,7 @@ public class AnagramUtil<T> {
 	 * This method returns the largest group of anagrams in the input array of words,
 	 * in no particular order. It returns an empty array if there are no anagrams in the input array.
 	 * @param arr
-	 * @return
+	 * @return String[]
 	 */
 	public static String[] getLargestAnagramGroup(String[] arr){
 		String[] anagramList = new String[0];
@@ -122,61 +162,82 @@ public class AnagramUtil<T> {
 	 * It is assumed that the file contains one word per line. If the file does not exist or is empty,
 	 * the method returns an empty array because there are no anagrams.
 	 * @param filename
-	 * @return
+	 * @return String[]
 	 */
 	public static String[] getLargestAnagramGroup(String filename){
-		//Create scanner from text in file
-		Scanner sc = new Scanner(filename);
-		
 		//Create new String array to return
 		String[] sarr = new String[0];
 		
-		//Copy info from scanner to String array
-		while(sc.hasNext()){
-			addToArray(sc.next(),sarr);
+		//Get file from String filename
+		File file = new File(filename);
+		
+		//Create scanner from text in file
+		Scanner sc;
+		try {
+			sc = new Scanner(file);
+			
+			//Copy info from scanner to String array
+			while(sc.hasNext()){
+				sarr = addToArray(sc.next(),sarr);
+			}
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 		}
 		
 		//Return the anagram list
 		return getLargestAnagramGroup(sarr);
 	}
-	
+
 	/**
 	 * This method is used to set the state of the AnagramUtil class to use either selection or insertion sort
+	 * @param sortMethod
 	 */
 	public static void setSortMethod(SortMethod sortMethod){
 		method = sortMethod;
 	}
 	
-	private static void addToArray(String s1, String s2, String[] arr){
-		int i;
-		//Increase array size by 2
-		String[] tempList = arr.clone();
-		arr = new String[arr.length + 2];
-		
-		//Add in original elements
-		for(i = 0; i < tempList.length; i ++)
-			arr[i] = tempList[i];
-		
-		//Add new anagram pair
-		arr[i + 1] = s1;
-		arr[i + 2] = s2;
-	}
-	
-	private static void addToArray(String s1, String[] arr){
+	/**
+	 * This method adds a string to an array.
+	 * @param s1
+	 * @param arr
+	 */
+	private static String[] addToArray(String s1, String[] arr){
 		int i;
 		//Increase array size by 1
 		String[] tempList = arr.clone();
 		arr = new String[arr.length + 1];
 		
 		//Add in original elements
-		for(i = 0; i < tempList.length; i ++)
-			arr[i] = tempList[i];
+		if(!(tempList.length < 1)){
+			for(i = 0; i < tempList.length; i ++)
+				arr[i] = tempList[i];
+		}
 		
-		//Add new anagram pair
-		arr[i + 1] = s1;
+		//Add new String to Array
+		arr[tempList.length] = s1;
+		
+		return arr;
 	}
 	
-	private class StringComparator implements Comparator<T>, Comparable<T> {
+	/**
+	 * This method adds two strings to an array
+	 * @param s1
+	 * @param s2
+	 * @param arr
+	 */
+	private static void addToArray(String s1, String s2, String[] arr){
+		addToArray(s1, arr);
+		addToArray(s2, arr);
+	}
+	
+	/**
+	 * This class is used to create a String Comparator
+	 * @author Alonzo Rose & Michael Anderson
+	 *
+	 * @param <T>
+	 */
+	private static class StringComparator<T> implements Comparator<T>, Comparable<T> {
 
 		@Override
 		public int compare(T o1, T o2) {
