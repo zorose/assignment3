@@ -130,6 +130,40 @@ public class TestAnagramUtil extends TestBase {
 		TestUtil.assertEquals(results.length, 0);
 	}
 	
+	public void testGetLargestAnagramGroup_Parameters() {
+		try {
+			AnagramUtil.getLargestAnagramGroup((String)null);
+			TestUtil.fail("Should have thrown an exception!");
+		}
+		catch (IllegalArgumentException e) {
+			// Expected
+		}
+		
+		try {
+			AnagramUtil.getLargestAnagramGroup("nonexistent.txt");
+			TestUtil.fail("Should have thrown an exception!");
+		}
+		catch (IllegalArgumentException e) {
+			// Expected
+		}
+		
+		try {
+			AnagramUtil.getLargestAnagramGroup(new String[0]);
+			TestUtil.fail("Should have thrown an exception!");
+		}
+		catch (IllegalArgumentException e) {
+			// Expected
+		}
+		
+		try {
+			AnagramUtil.getLargestAnagramGroup((String[])null);
+			TestUtil.fail("Should have thrown an exception!");
+		}
+		catch (IllegalArgumentException e) {
+			// Expected
+		}
+	}
+	
 	// END testGetLargestAnagramGroup
 	
 	// START testAreAnagrams
@@ -156,6 +190,33 @@ public class TestAnagramUtil extends TestBase {
 		// Not anagrams
 		TestUtil.assertFalse(AnagramUtil.areAnagrams("Last", "Lest"));
 		TestUtil.assertFalse(AnagramUtil.areAnagrams("carets", "carters"));
+	}
+	
+	public void testAreAnagrams_Parameters() {
+		try {
+			AnagramUtil.areAnagrams("Anagram", null);
+			TestUtil.fail("Should have thrown an exception!");
+		}
+		catch (IllegalArgumentException e) {
+			// Expected
+		}
+
+		try {
+			AnagramUtil.areAnagrams(null, "Anagram");
+			TestUtil.fail("Should have thrown an exception!");
+		}
+		catch (IllegalArgumentException e) {
+			// Expected
+		}
+
+		try {
+			AnagramUtil.areAnagrams(null, null);
+			TestUtil.fail("Should have thrown an exception!");
+		}
+		catch (IllegalArgumentException e) {
+			// Expected
+		}
+
 	}
 	
 	// END testAreAnagrams

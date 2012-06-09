@@ -144,6 +144,10 @@ public class AnagramUtil {
 	 * @return boolean
 	 */
 	public static boolean areAnagrams(String s1, String s2){
+		if (s1 == null || s2 == null) {
+			throw new IllegalArgumentException("Cannot compare a null string!");
+		}
+		
 		//Sort each string ignoring case
 		s1 = sort(s1.toLowerCase());
 		s2 = sort(s2.toLowerCase());
@@ -237,11 +241,18 @@ public class AnagramUtil {
 	 * @return String[]
 	 */
 	public static String[] getLargestAnagramGroup(String filename){
+		if (filename == null) {
+			throw new IllegalArgumentException("Cannot accept a null filename!");
+		}
 		//Create new String array to return
 		String[] results = new String[0];
 		
 		//Get file from String filename
 		File file = new File(filename);
+		
+		if (!file.exists()) {
+			throw new IllegalArgumentException("Given file does not exist!");
+		}
 		
 		//Create scanner from text in file
 		Scanner sc;
@@ -280,7 +291,6 @@ public class AnagramUtil {
 		if(duplicateInsertion(s1, arr) == true)
 			return arr;
 
-		
 		//Increase array size by 1
 		String[] tempList = arr.clone();
 		arr = new String[arr.length + 1];
