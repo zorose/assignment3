@@ -164,6 +164,155 @@ public class TestAnagramUtil extends TestBase {
 	 * Test different run times of each sorting method
 	 */
 	public void testRunTime(){
+		//Set variables
+		String[] wordList 	 = new String[10];
+		long	 cycles		 = 10000;
+		long	 maxCycles	 = 100000;
+		long 	 start;
+		long 	 mid;
+		long 	 end;
+		/**
+		 * Generates two random strings and tests for anagrams n number of times using INSERTION
+		 */
+		System.out.println("\n" + "Test areAnagrams INSERTION:");
+		AnagramUtil.setSortMethod(SortMethod.INSERTION);
+		while(cycles < maxCycles){
+			String s1 = (int)(Math.random() * ((99999999) + 1)) + "";
+			String s2 = (int)(Math.random() * ((99999999) + 1)) + "";
+			
+			//Spin down
+			start = System.nanoTime();
+			while (System.nanoTime() - start < 1000000000) { }
+			
+			//Set Start time
+			start = System.nanoTime();
+			
+			//Test
+			for (long i = 0; i < cycles; i ++){
+				AnagramUtil.areAnagrams(s1, s2);
+			}
+			//Set mid time
+			mid = System.nanoTime();
+			
+			//Get time it took to run the loop
+			for (long i = 0; i < cycles; i ++) { }
+			
+			//Set stop time
+			end = System.nanoTime();
+			
+			//Calculate average run time
+			double averageTime = ((mid - start) - (end - mid)) / cycles;
+			System.out.print("\n" + averageTime + "  nanoseconds " + "n = : " + cycles);
+			cycles += 500;
+		}
 		
+		/**
+		 * Generates two random strings and tests for anagrams n number of times using SELECTION
+		 */
+		cycles = 10000;
+		System.out.println("\n" +  "Test areAnagrams SELECTION:");
+		AnagramUtil.setSortMethod(SortMethod.SELECTION);
+		while(cycles < maxCycles){
+			String s1 = (int)(Math.random() * ((99999999) + 1)) + "";
+			String s2 = (int)(Math.random() * ((99999999) + 1)) + "";
+			
+			//Spin down
+			start = System.nanoTime();
+			while (System.nanoTime() - start < 1000000000) { }
+			
+			//Set Start time
+			start = System.nanoTime();
+			
+			//Test
+			for (long i = 0; i < cycles; i ++){
+				AnagramUtil.areAnagrams(s1, s2);
+			}
+			//Set mid time
+			mid = System.nanoTime();
+			
+			//Get time it took to run the loop
+			for (long i = 0; i < cycles; i ++) { }
+			
+			//Set stop time
+			end = System.nanoTime();
+			
+			//Calculate average run time
+			double averageTime = ((mid - start) - (end - mid)) / cycles;
+			System.out.print("\n" + averageTime + "  nanoseconds " + "n = : " + cycles);
+			cycles += 500;
+		}
+		
+		//Create a 50,000 element array and fills it with random strings, some anagrams and some not
+		for(int i = 0; i < wordList.length; i ++){
+			wordList[i] = (int)(Math.random() * ((99999999) + 1)) + "";
+		}
+		
+		/**
+		 * Tests getLargestAnagramGroup using INSERTION n number of times.
+		 */
+		cycles = 10000;
+		System.out.println("\n" +  "Test getLargestAnagramGroup INSERTION:");
+		AnagramUtil.setSortMethod(SortMethod.INSERTION);
+		while(cycles < maxCycles){
+			
+			//Spin down
+			start = System.nanoTime();
+			while (System.nanoTime() - start < 1000000000) { }
+			
+			//Set Start time
+			start = System.nanoTime();
+			
+			//Test
+			for (int i = 0; i < cycles; i ++){
+				AnagramUtil.getLargestAnagramGroup(wordList);
+			}
+			//Set mid time
+			mid = System.nanoTime();
+			
+			//Get time it took to run the loop
+			for (int i = 0; i < cycles; i ++) { }
+			
+			//Set stop time
+			end = System.nanoTime();
+			
+			//Calculate average run time
+			double averageTime = ((mid - start) - (end - mid)) / cycles;
+			System.out.print("\n" + averageTime + "  nanoseconds " + "n = : " + cycles);
+			cycles += 500;
+		}
+		
+		/**
+		 * Tests getLargestAnagramGroup using SELECTION n number of times.
+		 */
+		cycles = 10000;
+		System.out.println("\n" +  "Test getLargestAnagramGroup SELECTION:");
+		AnagramUtil.setSortMethod(SortMethod.SELECTION);
+		while(cycles < maxCycles){
+			
+			//Spin down
+			start = System.nanoTime();
+			while (System.nanoTime() - start < 1000000000) { }
+			
+			//Set Start time
+			start = System.nanoTime();
+			
+			//Test
+			for (int i = 0; i < cycles; i ++){
+				AnagramUtil.getLargestAnagramGroup(wordList);
+			}
+			//Set mid time
+			mid = System.nanoTime();
+			
+			//Get time it took to run the loop
+			for (int i = 0; i < cycles; i ++) { }
+			
+			//Set stop time
+			end = System.nanoTime();
+			
+			//Calculate average run time
+			double averageTime = ((mid - start) - (end - mid)) / cycles;
+			System.out.print("\n" + averageTime + "  nanoseconds " + "n = : " + cycles);
+			cycles += 500;
+		}
 	}
 }
