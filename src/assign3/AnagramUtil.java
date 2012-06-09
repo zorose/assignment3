@@ -7,11 +7,10 @@ import java.util.Scanner;
 /**
  * 
  * @author Alonzo Rose & Michael Anderson
- * @param <T>
  *
  */
 
-public class AnagramUtil<T> {
+public class AnagramUtil {
 	//Variables
 	public enum 	SortMethod { INSERTION, SELECTION };
 	private static 	SortMethod method	= SortMethod.INSERTION;
@@ -25,61 +24,47 @@ public class AnagramUtil<T> {
 	 * @param s
 	 * @return
 	 */
-	public static <T>String sort(String s){
-		//Covert String s to T[]
-		T[] tarr = (T[]) new Character[s.toCharArray().length];
-		
-		char[] carr = s.toCharArray();
-		
-		for(int i = 0; i < carr.length; i ++){
-			Character c = carr[i];
-			tarr[i] = (T) c;
+	public static String sort(String s){
+		if (s == null) {
+			throw new IllegalArgumentException("String cannot be null!");
 		}
+		
+		//Covert String s to character array
+		Character[] arr = stringToCharacterArray(s);
 		
 		//Create String Comparator to pass the sorting method
-		Comparator<T> byStringComparator = new StringComparator();
+		Comparator<Character> stringComparator = new NaturalComparator<Character>();
 		
 		//Choose the sorting method
-		if(method == SortMethod.INSERTION){
-			insertionSort(tarr, byStringComparator);
+		if (method == SortMethod.INSERTION){
+			insertionSort(arr, stringComparator);
 		}
-		
-		else{
-			selectionSort(tarr, byStringComparator);
+		else {
+			selectionSort(arr, stringComparator);
 		}
-		
-		//Create return string
-		String result = "";
-		
-		//Transfer sorted Character array back to a string
-		for(T t : tarr){
-			result = result + t;
-		}
-		
+
 		//Return sorted String
-		return result;
+		return characterArrayToString(arr);
 	}
 	
 	/**
-	 * This method sorts an array of strings
+	 * This method sorts the given strings into groups of anagrams
 	 * @param sarr
 	 * @return
 	 */
 	public static String[] sort(String[] sarr){
-
-		//Create String Comparator to pass the sorting method
-		Comparator<String> byStringComparator = new StringComparator();
+		// Create String Comparator to pass the sorting method
+		Comparator<String> anagramComparator = new AnagramComparator();
 		
-		//Choose the sorting method
+		// Choose the sorting method
 		if(method == SortMethod.INSERTION){
-			insertionSort(sarr, byStringComparator);
+			insertionSort(sarr, anagramComparator);
 		}
-		
 		else{
-			selectionSort(sarr, byStringComparator);
+			selectionSort(sarr, anagramComparator);
 		}
 		
-		//Return sorted String
+		// Return sorted Strings
 		return sarr;
 	}
 	
@@ -89,19 +74,32 @@ public class AnagramUtil<T> {
 	 * @param c
 	 */
 	public static <T> void insertionSort(T[] arr, Comparator<? super T> c){
-		T key; //The item to be inserted
-		int j; //Number of items sorted so far
-		int i;
+		// validate parameters
+		if (arr == null) {
+			throw new IllegalArgumentException("The given array cannot be null!");
+		}
+		if (c == null) {
+			throw new IllegalArgumentException("The given comparator cannot be null!");
+		}
 		
+		T key; // The item to be inserted
+		int gapIndex; // Keeps track of the current gap index
 		
-		//If arr is not larger than one element: return the array.
-		
-		for(j = 1; j < arr.length; j ++){
-			key = arr[j];
-			for(i = j-1; (i >= 0) && ( c.compare(arr[i], key) > 0); i --){
-				arr[i+1] = arr[i];
+		// Go through each item
+		for (int i = 1; i < arr.length; i++) {
+			// Make the gap
+			key = arr[i];
+			gapIndex = i;
+			
+			// Position the gap
+			while (gapIndex > 0 && c.compare(arr[gapIndex - 1], key) > 0 ) {
+				// Move the gap up
+				arr[gapIndex] = arr[gapIndex - 1];
+				gapIndex--;
 			}
-			arr[i+1] = key;
+			
+			// Insert into the gap
+			arr[gapIndex] = key;
 		}
 	}
 	
@@ -111,22 +109,32 @@ public class AnagramUtil<T> {
 	 * @param c
 	 */
 	public static <T> void selectionSort(T[] arr, Comparator<? super T> c){
-		//TODO this is sorting backwards
-		int first;
-		T temp;
-		
-		for(int i = arr.length -1; i > 0; i --){
-			first = 0;
-			
-			for(int j = 1; j <= i; j ++){
-				if(c.compare(arr[j], arr[first]) < 0)
-					first = j;
+		// validate parameters
+		if (arr == null) {
+			throw new IllegalArgumentException("The given array cannot be null!");
+		}
+		if (c == null) {
+			throw new IllegalArgumentException("The given comparator cannot be null!");
+		}
+
+		int smallestIndex;
+		for (int i = 0; i < arr.length - 1; i++) {
+			smallestIndex = i;
+
+			// Find the index of the smallest element
+			for (int j = i + 1; j < arr.length; j++) {
+				if (c.compare(arr[j], arr[smallestIndex]) < 0) {
+					smallestIndex = j;
+				}
 			}
 			
-			temp		= arr[first];
-			arr[first]	= arr[i];
-			arr[i]		= temp;
-		}          
+			// Swap elements if necessary
+			if (smallestIndex != i) {
+				T temp = arr[i];
+				arr[i] = arr[smallestIndex];
+				arr[smallestIndex] = temp;
+			}
+		}
 	}
 	
 	/**
@@ -158,20 +166,68 @@ public class AnagramUtil<T> {
 	 * @return String[]
 	 */
 	public static String[] getLargestAnagramGroup(String[] arr){
-		String[] anagramList = new String[0];
-		//Check if each set is an anagram
-		for(int i = 1; i < arr.length; i ++){
-			for(int j = 0; j < i; j ++){
-				if(areAnagrams(arr[i], arr[j])){
-					//if it is then add eat to the list of anagrams
-					anagramList = addToArray(arr[i], anagramList);
-					anagramList = addToArray(arr[j], anagramList);
+		if (arr == null) {
+			throw new IllegalArgumentException("Cannot accept a null array!");
+		}
+		if (arr.length < 1) {
+			throw new IllegalArgumentException("Cannot accept an empty array!");
+		}
+		String[] wordList = arr.clone();
+		sort(wordList);
+		
+		// Check for anagram groups
+		String firstWordInGroup = wordList[0];
+		int groupIndex = 0;
+		int groupSize = 1;
+		int largestGroupSize = 1;
+		int largestGroupIndex = 0;
+		int largestGroupIndexEnd = 0;
+		for (int i = 1; i < wordList.length; i++) {
+			if (areAnagrams(firstWordInGroup, wordList[i])) {
+				groupSize++;
+				if (groupSize > largestGroupSize) {
+					largestGroupIndex = groupIndex;
+					largestGroupSize = groupSize;
+					largestGroupIndexEnd = i;
 				}
 			}
+			else {
+				firstWordInGroup = wordList[i];
+				groupSize = 1;
+				groupIndex = i;
+			}
 		}
-		//return the list of anagrams
+		
+		// Grab the strings in the largest group
+		String[] anagramList;
+		if (largestGroupSize > 1) {
+			anagramList = new String[largestGroupIndexEnd - largestGroupIndex + 1];
+			for (int i = 0; i < anagramList.length; i++) {
+				anagramList[i] = wordList[i + largestGroupIndex];
+			}
+		}
+		else {
+			anagramList = new String[0];
+		}
+	
 		return anagramList;
 	}
+
+//	public static String[] getLargestAnagramGroup(String[] arr){
+//		String[] anagramList = new String[0];
+//		//Check if each set is an anagram
+//		for(int i = 1; i < arr.length; i ++){
+//			for(int j = 0; j < i; j ++){
+//				if(areAnagrams(arr[i], arr[j])){
+//					//if it is then add each to the list of anagrams
+//					anagramList = addToArray(arr[i], anagramList);
+//					anagramList = addToArray(arr[j], anagramList);
+//				}
+//			}
+//		}
+//		//return the list of anagrams
+//		return anagramList;
+//	}
 	
 	/**
 	 * Behaves the same as the previous method, but reads the list of words from the input filename.
@@ -256,18 +312,22 @@ public class AnagramUtil<T> {
 		return false;
 	}
 	
-	/**
-	 * This class is used to create a String Comparator
-	 * @author Alonzo Rose & Michael Anderson
-	 *
-	 * @param <T>
-	 */
-	private static class StringComparator<T> implements Comparator<T> {
-
-		@Override
-		public int compare(T o1, T o2) {
-			Comparable<T> element = (Comparable<T>) o1;
-			return element.compareTo(o2);
+	private static Character[] stringToCharacterArray(String s) {
+		char[] arr = s.toCharArray();
+		Character[] carr = new Character[arr.length];
+		for (int i = 0; i < arr.length; i++) {
+			carr[i] = arr[i];
 		}
+		
+		return carr;
+	}
+	
+	private static String characterArrayToString(Character[] carr) {
+		StringBuilder result = new StringBuilder();
+		for (Character each : carr) {
+			result.append(each);
+		}
+		
+		return result.toString();
 	}
 }

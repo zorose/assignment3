@@ -8,6 +8,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import assign3.test.PostTest;
+import assign3.test.PreTest;
+
 /**
  * Provides basic test functionality to test classes
  * 
@@ -17,15 +20,29 @@ public abstract class TestBase {
 	private List<Method> lastPassedTestMethods;
 	private List<Method> lastFailedTestMethods;
 	private List<Method> foundTestMethods;
+	private List<Method> preTestMethods;
+	private List<Method> postTestMethods;
 	
 	public TestBase() {
 		this.foundTestMethods = new ArrayList<Method>();
+		this.preTestMethods = new ArrayList<Method>();
+		this.postTestMethods = new ArrayList<Method>();
 
 		// Collect all of the test methods for this class
 		Method methods[] = this.getClass().getMethods();
 		for (Method each : methods) {
-			if (each.getName().indexOf("test") == 0) {
+			boolean isPreTest = each.isAnnotationPresent(PreTest.class);
+			boolean isPostTest = each.isAnnotationPresent(PostTest.class);
+			
+			if (each.getName().indexOf("test") == 0 &&
+			    !isPreTest && !isPostTest) {
 				this.foundTestMethods.add(each);
+			}
+			else if (isPreTest) {
+				preTestMethods.add(each);
+			}
+			else if (isPostTest) {
+				postTestMethods.add(each);
 			}
 		}
 	}
@@ -78,7 +95,9 @@ public abstract class TestBase {
 			currentTestIndex++;
 			try {
 				System.out.print("Running Test #" + currentTestIndex + ": " + each.getName());
+				runTestSetup();
 				each.invoke(this);
+				runTestTeardown();
 				// Track passed methods
 				lastPassedTestMethods.add(each);
 				System.out.println(" -- Passed");
@@ -93,7 +112,6 @@ public abstract class TestBase {
 				// Since this was caused by an invocation, there was an underlying exception that occurred. 
 				Exception cause = (Exception) e.getCause();
 				if (cause != null) {
-					System.err.println(cause.getLocalizedMessage());
 					cause.printStackTrace();
 				}
 				System.err.flush();
@@ -108,4 +126,29 @@ public abstract class TestBase {
 		System.out.println("Tests Passed: " + lastPassedTestMethods.size());
 		System.out.println("Tests Failed: " + lastFailedTestMethods.size());
 	}
+	
+	/**
+	 * Runs any methods with the @PreTest annotation.
+	 * 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 */
+	private void runTestSetup() throws InvocationTargetException, IllegalAccessException {
+		for (Method each : this.preTestMethods) {
+			each.invoke(this);
+		}
+	}
+	
+	/**
+	 * Runs any methods with the @PostTest annotation.
+	 * 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 */
+	public void runTestTeardown() throws InvocationTargetException, IllegalAccessException {
+		for (Method each : this.postTestMethods) {
+			each.invoke(this);
+		}
+	}
+
 }

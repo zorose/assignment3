@@ -1,39 +1,112 @@
 package assign3;
 
-import assign3.test.TestBase;
-import assign3.test.TestUtil;
+import assign3.AnagramUtil.SortMethod;
+import assign3.test.*;
 
+/**
+ * 
+ * @author Alonzo Rose & Michael Anderson
+ *
+ */
 public class TestAnagramUtil extends TestBase {
 
 	/**
-	 * @author Alonzo Rose & Michael Anderson
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		new TestAnagramUtil().runTests();
 	}
 	
-	//TODO Use both selection and insertion sorting methods
+	@PreTest
+	public void setup() {
+		// Test setup goes here
+	}
 	
-	public void testSort(){
+	@PostTest
+	public void teardown() {
+		// Test teardown goes here
+	}
+	
+	// BEGIN testSortCharacters
+	
+	public void testSortCharacters_Insertion(){
+		// Insertion
+		AnagramUtil.setSortMethod(SortMethod.SELECTION);
+		testSortCharacters();
+	}
+	
+	public void testSortCharacters_Selection() {
+		// Selection sort
+		AnagramUtil.setSortMethod(SortMethod.SELECTION);
+		testSortCharacters();
+	}
+	
+	private void testSortCharacters() {
 		String input 	= "Stephen";
 		String result 	= AnagramUtil.sort(input);
 		String expected = "Seehnpt";
 		TestUtil.assertEquals(result, expected);
 	}
 	
-	public void testComparator(){
-		String[] input = new String[]{"z", "a", "f"};
-		String[] expected = new String[]{"a", "f", "z"};
-		String[] results = AnagramUtil.sort(input);
-		
-		for(int i = 0; i < results.length; i ++){
-			TestUtil.assertEquals(results[i], expected[i]);
+	public void testSortCharacters_Parameters() {
+		// Test exception
+		try {
+			AnagramUtil.sort((String)null);
+			TestUtil.fail("Should have thrown an exception!");
 		}
-		
+		catch (IllegalArgumentException e) {
+			// Expected
+		}
 	}
 	
-	public void testGetLargestAnagramGroup(){
+	// END testSortCharacters
+	
+	// BEGIN testSortStrings
+	
+	public void testSortStrings_Insertion() {
+		AnagramUtil.setSortMethod(SortMethod.INSERTION);
+		testSortStrings();
+	}
+	
+	public void testSortStrings_Selection() {
+		AnagramUtil.setSortMethod(SortMethod.INSERTION);
+		testSortStrings();
+	}
+	
+	private void testSortStrings(){
+		String[] input = new String[]{"carets", "conservationalists", "caters", "caster", "conversationalists"};
+		String[] expected = new String[]{"conservationalists", "conversationalists", "carets", "caters", "caster"};
+		
+		String[] results = AnagramUtil.sort(input);
+		TestUtil.assertEquals(results, expected);
+	}
+	
+	public void testSortStrings_Parameters() {
+		// Test exception
+		try {
+			AnagramUtil.sort((String[])null);
+			TestUtil.fail("Should have thrown an exception!");
+		}
+		catch (IllegalArgumentException e) {
+			// Expected
+		}
+	}
+	
+	// END testSortStrings
+
+	// BEGIN testGetLargestAnagramGropu
+	
+	public void testGetLargestAnagramGroup_Insertion() {
+		AnagramUtil.setSortMethod(SortMethod.INSERTION);
+		testGetLargestAnagramGroup();
+	}
+	
+	public void testGetLargestAnagramGroup_Selection() {
+		AnagramUtil.setSortMethod(SortMethod.SELECTION);
+		testGetLargestAnagramGroup();
+	}
+	
+	private void testGetLargestAnagramGroup(){
 		//Test getLargestAnagramGroup method w/File name:
 		String[] results 	= AnagramUtil.getLargestAnagramGroup("sample_word_list.txt");
 		String[] expected 	= new String[]{"carets", "Caters", "caster", "crates", "Reacts", "recast", "traces"};
@@ -44,22 +117,48 @@ public class TestAnagramUtil extends TestBase {
 			for(String s2 : results)
 				if(s1.equals(s2))
 					count ++;
-		TestUtil.assertEquals(count, expected.length);
-		
-		
+		TestUtil.assertEquals(count, expected.length, "Results did not contain all that was expected!");
 		
 		//Test getLargestAnagramGroup method w/String[]:
 		String[] input	= new String[]{"hydroxydeoxycorticosterones", "hydroxydesoxycorticosterone", "not_an_anagram"};
 		expected 		= new String[]{"hydroxydeoxycorticosterones", "hydroxydesoxycorticosterone"};
 		results = AnagramUtil.getLargestAnagramGroup(input);
 		
-		//Sort arrays for testing
-		results  = AnagramUtil.sort(results);
-		expected = AnagramUtil.sort(expected);
-		
-		for(int i = 0; i < expected.length; i ++)
-			TestUtil.assertEquals(results[i], expected[i]);
+		// Test no anagrams present
+		input = new String[]{"There", "are", "no", "anagrams", "here"};
+		results = AnagramUtil.getLargestAnagramGroup(input);
+		TestUtil.assertEquals(results.length, 0);
 	}
+	
+	// END testGetLargestAnagramGroup
+	
+	// START testAreAnagrams
+	
+	public void testAreAnagrams_Insertion() {
+		AnagramUtil.setSortMethod(SortMethod.INSERTION);
+		testAreAnagrams();
+	}
+	
+	public void testAreAnagrams_Selection() {
+		AnagramUtil.setSortMethod(SortMethod.SELECTION);
+		testAreAnagrams();
+	}
+	
+	private void testAreAnagrams() {
+		// Same case
+		TestUtil.assertTrue(AnagramUtil.areAnagrams("carets", "caters"));
+		TestUtil.assertTrue(AnagramUtil.areAnagrams("caters", "carets"));
+		
+		// Mixed case
+		TestUtil.assertTrue(AnagramUtil.areAnagrams("carets", "CaTeRs"));
+		TestUtil.assertTrue(AnagramUtil.areAnagrams("CaReTs", "caters"));
+		
+		// Not anagrams
+		TestUtil.assertFalse(AnagramUtil.areAnagrams("Last", "Lest"));
+		TestUtil.assertFalse(AnagramUtil.areAnagrams("carets", "carters"));
+	}
+	
+	// END testAreAnagrams
 	
 	/**
 	 * Test different run times of each sorting method
